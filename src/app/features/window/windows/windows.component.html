@@ -4,11 +4,11 @@
 <div class="container">
 
   <p>
-    <mat-form-field appearance="legacy" (keyup)="updateFilter($event)">
+    <mat-form-field class="w-100" appearance="legacy" (keyup)="updateFilter($event)">
       <mat-label>Rechercher</mat-label>
       <input matInput placeholder="Placeholder">
       <mat-icon matSuffix>search</mat-icon>
-      <mat-hint>recherche</mat-hint>
+<!--      <mat-hint>recherche</mat-hint>-->
     </mat-form-field>
   </p>
   <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-100">
