@@ -1,0 +1,12 @@
+<mat-sidenav-container>
+  <mat-sidenav position="start" [(opened)]="opened" mode="side">
+    <mat-list class="pl-10 m-20">
+      <mat-list-item><a routerLink="windows">Windows</a></mat-list-item>
+      <mat-list-item><a routerLink="windows">Add Window</a></mat-list-item>
+      <mat-list-item><a routerLink="windows">test</a></mat-list-item>
+    </mat-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

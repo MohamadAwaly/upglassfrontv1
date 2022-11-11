@@ -1,0 +1,36 @@
+<mat-toolbar class="nav d-flex flex-row flex-justify-content-between flex-align-items-center p-10">
+  <div class="d-flex flex-row ">
+    <a routerLink="/" class="logo p-20 ">Upglass</a>
+    <button (click)="opened()" class="menu" mat-button><mat-icon>menu</mat-icon></button>
+  </div>
+
+  <div>
+  <button mat-button [matMenuTriggerFor]="aboveMenu">Window</button>
+  <mat-menu #aboveMenu="matMenu" yPosition="above">
+    <button mat-menu-item>Windows List</button>
+    <button mat-menu-item>Add new window</button>
+  </mat-menu>
+
+  <button mat-button [matMenuTriggerFor]="belowMenu">Below</button>
+  <mat-menu #belowMenu="matMenu" yPosition="below">
+    <button mat-menu-item>Item 1</button>
+    <button mat-menu-item>Item 2</button>
+  </mat-menu>
+
+  <button mat-button [matMenuTriggerFor]="beforeMenu">Before</button>
+  <mat-menu #beforeMenu="matMenu" xPosition="before">
+    <button mat-menu-item>Item 1</button>
+    <button mat-menu-item>Item 2</button>
+  </mat-menu>
+
+
+  <button mat-button [matMenuTriggerFor]="afterMenu">After</button>
+  <mat-menu #afterMenu="matMenu" xPosition="after">
+    <button mat-menu-item>Item 1</button>
+    <button mat-menu-item>Item 2</button>
+  </mat-menu>
+  </div>
+</mat-toolbar>
+
+
+

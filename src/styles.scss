@@ -1,0 +1,222 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; // permet de prendre le padding et le marging comme etant une partie integrante de la tailel d'une element en html donc ils seront compris dans la taille total de l'element
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+input {
+  border : 1px solid #ddd;
+  border-radius: 3px;
+  padding: 8px 15px;
+}
+
+hr {
+  margin: 20px 0px;
+  border-top: solid #ddd;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+// delcarer des variables et on va pouvoir les utilisée dans le reste de l'application
+:root {
+  --font-family: 'Roboto', sans-serif;
+  --primary: #40739e;
+  --secondary: #e1b12c;
+  --body: #a4e0f2;
+  --accent: #e5546d;
+  --lightgray: #ddd;
+  --text-regular: #444;
+}
+
+body {
+  background: var(--body);
+  font-family: var(--font-family);
+  color: var(--text-regular);
+}
+
+// layout
+
+.container {
+  max-width: 1200px;
+  display: block;
+  margin: auto;
+  padding: 20px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-justify-content-center {
+  justify-content: center;
+}
+
+.flex-justify-content-between {
+  justify-content: space-between;
+}
+
+.flex-align-items-center {
+  align-items: center;
+}
+
+// prob
+.flex-align-items-between {
+  align-items: center;
+}
+
+.flex-fill {
+  flex: 1 1 auto;
+}
+
+.flex-50 {
+  flex: 1 1 50%;
+}
+
+// util
+.p-10 {
+  padding: 10px;
+}
+
+.p-20 {
+  padding: 20px;
+}
+
+.pr-10 {
+  padding-right: 10px;
+}
+
+.pl-10 {
+  padding-left: 10px;
+}
+
+.m-10 {
+  margin: 10px;
+}
+
+.m-20 {
+  margin: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.badge {
+  background-color: var(--secondary);
+  border-radius: 3px;
+  padding: 2px 5px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.active {
+  background-color: var(--secondary);
+  color: white;
+}
+
+//debug
+
+.d1 {
+  border: 1px solid red;
+}
+
+.d2 {
+  border: 1px solid green;
+}
+
+//theme
+
+.list-primary-action {
+  li {
+    &:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    transition: background-color 0.4S;
+  }
+}
+
+.list-primary {
+  li {
+    padding: 10px 15px;
+    border: 1px solid var(--lightgray);
+    border-top: 0;
+    cursor: pointer;
+  }
+
+  li:first-child {
+    border-top: 1px solid var(--lightgray);
+    border-top-left-radius: 3px;
+    border-top-right-radius: 2px;
+  }
+
+  li:last-child {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+}
+
+.btn {
+  padding: 10px 15px;
+  background-color: white;
+  border: 0;
+  border-radius: 3px;
+  font-weight: 700;
+  cursor: pointer;
+  &-secondary {
+    background-color: #ddd;
+  }
+  &-primary {
+    background-color: var(--primary);
+    color: white;
+
+    &:hover {
+      background-color: var(--secondary);
+    }
+
+    transition: background-color 0.4s;
+  }
+}
+
+.mat-toolbar {
+  background-color: var(--primary);
+  color: var(--lightgray);
+}
+
+
+
+

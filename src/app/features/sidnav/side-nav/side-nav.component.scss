@@ -1,0 +1,17 @@
+.mat-sidenav-container {
+  height: calc(205vh - 112vh);
+
+  mat-sidenav {
+    width: 250px;
+    background-color: var(--primary);
+
+    mat-list-item {
+      color: var(--lightgray);
+      &:hover {
+        background-color: var(--secondary);
+      }
+    }
+  }
+}
+
+
