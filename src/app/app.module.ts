@@ -25,7 +25,6 @@ import {WindowModule} from "./features/window/window.module";
     MaterialModule,
     BrowserModule,
     FormsModule,
-    WindowModule,
     RouterModule.forRoot(APP_ROUTES),
   ],
   providers: [],

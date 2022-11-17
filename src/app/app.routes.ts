@@ -1,9 +1,9 @@
 import {Routes} from "@angular/router";
-import {WindowsComponent} from "./features/window/windows/windows.component";
 
 
 export const APP_ROUTES: Routes = [
-  {path: '', redirectTo: '', pathMatch: 'full'},
-  {path: 'windows',component: WindowsComponent},
+  {path: '', redirectTo: 'window', pathMatch: 'full'},
+  {path: 'window', loadChildren: () => import('./features/window/window.module').then(m => m.WindowModule)},
+  // {path: 'windows',component: WindowsComponent},
 
 ]

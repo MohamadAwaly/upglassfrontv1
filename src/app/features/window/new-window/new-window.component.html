@@ -1,1 +1,42 @@
-<p>new-window works!</p>
+<h1 class="p-20">Ajouter une nouvelle référence</h1>
+
+<form [formGroup]="windowForm" (ngSubmit)="submit()">
+
+  <mat-card class="container "
+            fxLayout="row wrap"
+            fxLayoutAlign="space-between space-between"
+            fxLayoutGap="3px">
+    <mat-form-field class="" appearance="fill">
+      <mat-label>brand</mat-label>
+      <input formControlName="brand" type="text" matInput [formControl]="myControl" [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+        <mat-option *ngFor="let brand of filteredOptions | async" [value]="brand">
+          {{brand.brandName}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <div class="">
+      <mat-form-field appearance="fill">
+        <mat-label>Code</mat-label>
+        <input formControlName="code" matInput>
+      </mat-form-field>
+    </div>
+    <div class="">
+      <mat-form-field appearance="fill">
+        <mat-label>Nom</mat-label>
+        <input formControlName="name" matInput>
+      </mat-form-field>
+    </div>
+
+    <div class="">
+      <mat-form-field appearance="fill">
+        <mat-label>Prix</mat-label>
+        <input formControlName="unitSalePrice" matInput>
+      </mat-form-field>
+    </div>
+
+  </mat-card>
+
+
+</form>

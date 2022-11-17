@@ -1,8 +1,9 @@
 <body>
+
 <button mat-button></button>
 
 <div class="container">
-
+  <h1>Liste des réferences</h1>
   <p>
     <mat-form-field class="w-100" appearance="legacy" (keyup)="updateFilter($event)">
       <mat-label>Rechercher</mat-label>
@@ -43,6 +44,12 @@
         <ng-container  *ngFor="let option of window.optionsWindows">
           {{option.name}}
         </ng-container>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="edit">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Edit</th>
+      <td mat-cell *matCellDef="let window">
+        <button mat-button><mat-icon class="material-symbols-outlined">edit</mat-icon></button>
       </td>
     </ng-container>
 
