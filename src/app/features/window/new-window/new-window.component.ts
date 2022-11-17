@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validator, Validators} from "@angular/forms";
+import {map, Observable, startWith} from "rxjs";
+import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Window} from "../../../shared/interfaces/window";
 import {BrandService} from "../../../shared/services/brand.service";
 import {Brand} from "../../../shared/interfaces/brand";
-import {map, Observable, pipe, startWith} from "rxjs";
 import {WindowsTypeService} from "../../../shared/services/windows-type.service";
 import {WindowsType} from "../../../shared/interfaces/windows-type";
 
@@ -24,7 +24,9 @@ export class NewWindowComponent implements OnInit {
   options!: Brand[];
   filteredOptions!: Observable<Brand[]>;
 
-  constructor(private _fb: FormBuilder, private _brandService: BrandService, private _windowsTypeService: WindowsTypeService) {
+  constructor(private _fb: FormBuilder,
+              private _brandService: BrandService,
+              private _windowsTypeService: WindowsTypeService) {
   }
 
   ngOnInit(): void {
@@ -43,8 +45,23 @@ export class NewWindowComponent implements OnInit {
     // get list windows type
     this._windowsTypeService.getWindowsType().subscribe((wt: WindowsType[]) => {
       this.windowsType = wt;
+    });
+    //recupere la valeur de tout les champs dand le formulaire.
+    this.windowForm.valueChanges.subscribe((value) => {
+      console.log(value);
     })
+  }
 
+  get brand() {
+    return this.windowForm.get('brand');
+  }
+
+  validatorTest(formControl: AbstractControl): { [p: string]: true } | null {
+    if (formControl.value === 'test') {
+      return {notTest: true}
+    } else {
+      return null;
+    }
   }
 
   displayFn(brand: Brand): string {
@@ -58,26 +75,27 @@ export class NewWindowComponent implements OnInit {
 
 
   private initForm(window: Window = {
-    code: '',
-    name: '',
-    unitSalePrice: 0,
-    totalQty: 0,
-    model: {modelName: '', code: ''},
-    windowsType: {name: ''},
-    optionsWindows: []
-  }, brand: Brand = {brandName: ''}): FormGroup {
+                     code: '',
+                     name: '',
+                     unitSalePrice: 0,
+                     totalQty: 0,
+                     model: {modelName: '', code: ''},
+                     windowsType: {name: ''},
+                     optionsWindows: []
+                   },
+                   brand: Brand = {idBrand : 0 ,brandName: ''}): FormGroup {
     return this._fb.group({
-      brand: [brand.brandName, Validators.required],
+      brand: [brand, Validators.required],
       // windowsType:[Window.windowsType.name, Validators.required],
-      code: [window.code, Validators.required],
+      code: [window.code, [Validators.minLength(2), Validators.required]],
       name: [window.name, Validators.required],
       unitSalePrice: [window.unitSalePrice],
     })
-
   }
 
   public submit(): void {
-
+    console.log('form :: ', this.windowForm)
+    // this.windowForm.reset();
   }
 
 }

@@ -9,3 +9,14 @@
 button {
   margin-right: 10px;
 }
+
+.error {
+  color: red;
+}
+
+.ng-valid {
+  border-color: green;
+}
+.ng-invalid.ng-touched {
+  border-color: red;
+}

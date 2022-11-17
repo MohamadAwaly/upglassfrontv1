@@ -16,10 +16,19 @@
       </mat-autocomplete>
     </mat-form-field>
 
+<!--    <div *ngIf="brand.errors && brand.touched">-->
+<!--      <p class="error" *ngIf="brand.errors.required">-->
+<!--        test-->
+<!--      </p>-->
+<!--    </div>-->
+
+
+
+
     <div class="">
       <mat-form-field appearance="fill">
         <mat-label>Code</mat-label>
-        <input formControlName="code" matInput>
+        <input type="text" formControlName="code" matInput>
       </mat-form-field>
     </div>
     <div class="">
@@ -32,10 +41,12 @@
     <div class="">
       <mat-form-field appearance="fill">
         <mat-label>Prix</mat-label>
-        <input formControlName="unitSalePrice" matInput>
+        <input type="number" formControlName="unitSalePrice" matInput>
       </mat-form-field>
     </div>
-
+    <div>
+      <button class="btn btn-primary">Valider</button>
+    </div>
   </mat-card>
 
 
