@@ -7,15 +7,48 @@
     <div fxLayout="row wrap"
          fxLayoutAlign="space-between space-between"
          fxLayoutGap="3px">
-      <mat-form-field class="" appearance="fill">
+      <mat-form-field  class="" appearance="fill">
         <mat-label>brand</mat-label>
-        <input (click)="test()" formControlName="brand" type="object" matInput [formControl]="myControl" [matAutocomplete]="auto">
+        <input #myinput  (keydown)="test()" formControlName="brand" matInput [formControl]="myControl" [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-          <mat-option *ngFor="let brand of filteredOptions | async" [value]="brand">
+          <mat-option (click)="setBrand(brand); test()"  *ngFor="let brand of filteredOptions | async" [value]="brand">
             {{brand.brandName}}
           </mat-option>
         </mat-autocomplete>
+        <mat-error *ngIf="windowForm.controls['brand'].hasError('required')">
+          Please enter a value
+        </mat-error>
+        <mat-error *ngIf="windowForm.controls['brand'].hasError('incorrect')">
+          Please select a valid project
+        </mat-error>
       </mat-form-field>
+
+
+
+
+
+<!--      <mat-form-field class="" appearance="fill">-->
+<!--        <mat-label>brand</mat-label>-->
+<!--        <input (click)="test()" formControlName="brand" matInput [formControl]="myControl" [matAutocomplete]="auto">-->
+<!--        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">-->
+<!--          <mat-option *ngFor="let brand of filteredOptions | async" [value]="brand">-->
+<!--            {{brand.brandName}}-->
+<!--          </mat-option>-->
+<!--        </mat-autocomplete>-->
+<!--      </mat-form-field>-->
+
+
+
+
+<!--      <mat-form-field appearance="fill">-->
+<!--        <mat-label>Favorite food</mat-label>-->
+<!--        <mat-select formControlName="brand">-->
+<!--          <mat-option *ngFor="let brand of brands" [value]="brand">-->
+<!--            {{brand.brandName}}-->
+<!--          </mat-option>-->
+<!--        </mat-select>-->
+<!--      </mat-form-field>-->
+
 
       <!--    <div *ngIf="brand.errors && brand.touched">-->
       <!--      <p class="error" *ngIf="brand.errors.required">-->

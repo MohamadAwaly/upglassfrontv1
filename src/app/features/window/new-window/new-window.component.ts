@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {map, Observable, startWith} from "rxjs";
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {map, Observable, startWith, tap} from "rxjs";
 
 import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {WindowsTypeService} from "../../../shared/services/windows-type.service";
@@ -8,6 +8,8 @@ import {WindowsType} from "../../../shared/interfaces/windows-type";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Window} from "../../../shared/interfaces/window";
 import {Brand} from "../../../shared/interfaces/brand";
+import * as events from "events";
+
 
 @Component({
   selector: 'app-new-window',
@@ -27,6 +29,7 @@ export class NewWindowComponent implements OnInit {
   myControl = new FormControl<string | Brand>('');
   options!: Brand[];
   filteredOptions!: Observable<Brand[]>;
+  @ViewChild('myinput') public el!: ElementRef<HTMLInputElement>;
 
   constructor(private _fb: FormBuilder,
               private _brandService: BrandService,
@@ -43,7 +46,7 @@ export class NewWindowComponent implements OnInit {
       this.filteredOptions = this.myControl.valueChanges.pipe(
         startWith(''),
         map(value => {
-          const name = typeof value === 'string' ? value : value?.brandName;
+          const name: any = typeof value === 'string' ? value : value?.brandName;
           return name ? this._filter(name as string) : this.options.slice();
         }),
       );
@@ -54,7 +57,7 @@ export class NewWindowComponent implements OnInit {
     });
     //recupere la valeur de tout les champs dand le formulaire.
     this.windowForm.valueChanges.subscribe((value) => {
-      console.log(this.windowForm.get('brand')?.value);
+      // console.log(this.windowForm.get('brand')?.value);
       console.log(value);
     })
 
@@ -107,24 +110,49 @@ export class NewWindowComponent implements OnInit {
   //     unitSalePrice: [window.unitSalePrice],
   //   })
   // }
+  private brandTest !: Brand;
 
   private initForm(): FormGroup {
     return this.windowForm = this._fb.group({
-
-      brand: [this.filteredOptions],
+      brand: [this.filteredOptions, [Validators.required, this.requireMatch]],
       type: ['', Validators.required],
       model: ['', Validators.required]
     });
   }
 
+  private requireMatch(control: AbstractControl) {
+    console.log('req:::::::::::::::');
+    if (control.value === '') {
+      console.log('dans le if');
+      return {incorrect: true};
+    }
+    return null;
+    // const selection: any = control.value;
+    // console.log('require :: ', selection);
+    // if (typeof selection === 'string') {
+    //   return {incorrect: true};
+    // }
+    // return null;
+  }
+
   public submit(): void {
     // this._router.navigate(['..'], {relativeTo: this._activatedRoute});
-    console.log('form :: ', this.windowForm)
     // this.windowForm.reset();
   }
 
-  public test() : void {
-    console.log(this.windowForm.get('brand'));
+  public setBrand(brand: Brand): void {
+    this.windowForm.patchValue({
+      brand: brand
+    })
   }
 
+  public test(): void {
+    this.options.filter((b:Brand) => {
+      if(b.brandName.toLowerCase() === this.el.nativeElement.value.toLowerCase()){
+        this.windowForm.patchValue({
+          brand: b
+        })
+      }
+    } )
+  }
 }

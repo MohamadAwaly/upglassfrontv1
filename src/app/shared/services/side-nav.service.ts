@@ -6,7 +6,7 @@ import {BehaviorSubject, Observable} from "rxjs";
 })
 export class SideNavService {
 
-  private _opened$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  private _opened$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() {
   }
