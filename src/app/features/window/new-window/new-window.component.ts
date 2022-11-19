@@ -1,11 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {map, Observable, startWith} from "rxjs";
+
 import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {Window} from "../../../shared/interfaces/window";
-import {BrandService} from "../../../shared/services/brand.service";
-import {Brand} from "../../../shared/interfaces/brand";
 import {WindowsTypeService} from "../../../shared/services/windows-type.service";
+import {BrandService} from "../../../shared/services/brand.service";
 import {WindowsType} from "../../../shared/interfaces/windows-type";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
+import {Window} from "../../../shared/interfaces/window";
+import {Brand} from "../../../shared/interfaces/brand";
 
 @Component({
   selector: 'app-new-window',
@@ -14,8 +16,10 @@ import {WindowsType} from "../../../shared/interfaces/windows-type";
 })
 export class NewWindowComponent implements OnInit {
 
-  public brands: Brand [] = [];
   public windowsType: WindowsType [] = [];
+  public brands: Brand [] = [];
+
+  public window!: Window;
 
   public windowForm: FormGroup = this.initForm();
 
@@ -26,7 +30,9 @@ export class NewWindowComponent implements OnInit {
 
   constructor(private _fb: FormBuilder,
               private _brandService: BrandService,
-              private _windowsTypeService: WindowsTypeService) {
+              private _windowsTypeService: WindowsTypeService,
+              private _router: Router,
+              private _activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -48,8 +54,17 @@ export class NewWindowComponent implements OnInit {
     });
     //recupere la valeur de tout les champs dand le formulaire.
     this.windowForm.valueChanges.subscribe((value) => {
+      console.log(this.windowForm.get('brand')?.value);
       console.log(value);
     })
+
+    // recupere window
+    this._activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
+      const index = paramMap.get('index');
+      if (index) {
+
+      }
+    });
   }
 
   get brand() {
@@ -74,28 +89,42 @@ export class NewWindowComponent implements OnInit {
   }
 
 
-  private initForm(window: Window = {
-                     code: '',
-                     name: '',
-                     unitSalePrice: 0,
-                     totalQty: 0,
-                     model: {modelName: '', code: ''},
-                     windowsType: {name: ''},
-                     optionsWindows: []
-                   },
-                   brand: Brand = {idBrand : 0 ,brandName: ''}): FormGroup {
-    return this._fb.group({
-      brand: [brand, Validators.required],
-      // windowsType:[Window.windowsType.name, Validators.required],
-      code: [window.code, [Validators.minLength(2), Validators.required]],
-      name: [window.name, Validators.required],
-      unitSalePrice: [window.unitSalePrice],
-    })
+  // private initForm(window: Window = {
+  //                    code: '',
+  //                    name: '',
+  //                    unitSalePrice: 0,
+  //                    totalQty: 0,
+  //                    model: {modelName: '', code: ''},
+  //                    windowsType: {name: ''},
+  //                    optionsWindows: []
+  //                  },
+  //                  brand: Brand = {idBrand : 0 ,brandName: ''}): FormGroup {
+  //   return this._fb.group({
+  //     brand: [brand, Validators.required],
+  //     // windowsType:[Window.windowsType.name, Validators.required],
+  //     code: [window.code, [Validators.minLength(2), Validators.required]],
+  //     name: [window.name, Validators.required],
+  //     unitSalePrice: [window.unitSalePrice],
+  //   })
+  // }
+
+  private initForm(): FormGroup {
+    return this.windowForm = this._fb.group({
+
+      brand: [this.filteredOptions],
+      type: ['', Validators.required],
+      model: ['', Validators.required]
+    });
   }
 
   public submit(): void {
+    // this._router.navigate(['..'], {relativeTo: this._activatedRoute});
     console.log('form :: ', this.windowForm)
     // this.windowForm.reset();
+  }
+
+  public test() : void {
+    console.log(this.windowForm.get('brand'));
   }
 
 }
