@@ -1,5 +1,5 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {map, Observable, startWith, tap} from "rxjs";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {map, Observable, startWith, Subscription, tap} from "rxjs";
 
 import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {WindowsTypeService} from "../../../shared/services/windows-type.service";
@@ -9,6 +9,8 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Window} from "../../../shared/interfaces/window";
 import {Brand} from "../../../shared/interfaces/brand";
 import * as events from "events";
+import {Model} from "../../../shared/interfaces/model";
+import {ModelService} from "../../../shared/services/model.service";
 
 
 @Component({
@@ -16,31 +18,49 @@ import * as events from "events";
   templateUrl: './new-window.component.html',
   styleUrls: ['./new-window.component.scss']
 })
-export class NewWindowComponent implements OnInit {
+export class NewWindowComponent implements OnInit, OnDestroy {
 
   public windowsType: WindowsType [] = [];
   public brands: Brand [] = [];
-
+  public models!: Observable<Model[]>;
+  public modelList: Model[] = [];
+  public modelSelected: number | undefined = 0;
+  private subscription: Subscription = new Subscription();
   public window!: Window;
 
   public windowForm: FormGroup = this.initForm();
 
   //Autocomplete
   myControl = new FormControl<string | Brand>('');
-  options!: Brand[];
+  options: Brand[] = [];
   filteredOptions!: Observable<Brand[]>;
-  @ViewChild('myinput') public el!: ElementRef<HTMLInputElement>;
+  @ViewChild('myinput', {static: true}) public el!: ElementRef<HTMLInputElement>;
 
   constructor(private _fb: FormBuilder,
               private _brandService: BrandService,
               private _windowsTypeService: WindowsTypeService,
+              private _modelService: ModelService,
               private _router: Router,
               private _activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
+    if (this.modelSelected !== undefined) {
+      this.subscription.add(this._modelService.getModelsByIdBrand(this.modelSelected).subscribe((model: Model[]) => {
+          this.modelList = model;
+          this.models = this.myControl.valueChanges.pipe(
+            map(value => {
+              const name: any = typeof value === 'string' ? value : value?.brandName;
+              return name ? this._filtreModels(name as string) : this.modelList.slice();
+            })
+          )
+        })
+      );
+    }
+
+
     // get brand list
-    this._brandService.getWindows().subscribe((brand: Brand []) => {
+    this.subscription.add(this._brandService.getWindows().subscribe((brand: Brand []) => {
       this.brands = brand;
       this.options = this.brands;
       this.filteredOptions = this.myControl.valueChanges.pipe(
@@ -50,15 +70,17 @@ export class NewWindowComponent implements OnInit {
           return name ? this._filter(name as string) : this.options.slice();
         }),
       );
-    });
+    }))
     // get list windows type
-    this._windowsTypeService.getWindowsType().subscribe((wt: WindowsType[]) => {
+    this.subscription.add(this._windowsTypeService.getWindowsType().subscribe((wt: WindowsType[]) => {
       this.windowsType = wt;
-    });
+    }))
     //recupere la valeur de tout les champs dand le formulaire.
     this.windowForm.valueChanges.subscribe((value) => {
-      // console.log(this.windowForm.get('brand')?.value);
-      console.log(value);
+      // console.log(value.brand.brandName);
+      // console.log('value chanse');
+      // this._filtreModels();
+
     })
 
     // recupere window
@@ -74,13 +96,30 @@ export class NewWindowComponent implements OnInit {
     return this.windowForm.get('brand');
   }
 
-  validatorTest(formControl: AbstractControl): { [p: string]: true } | null {
+  /**
+   * Validators
+   * @param formControl
+   */
+  validatorTest(formControl: AbstractControl): { [s: string]: true } | null {
     if (formControl.value === 'test') {
-      return {notTest: true}
+      return {incorrecte: true}
     } else {
       return null;
     }
   }
+
+  /**
+   * async validators
+   * @param formControl
+   */
+  validatorAsync(formControl: AbstractControl): Promise<{ [s: string]: boolean } | null> {
+    return new Promise((resolve, reject) => {
+      console.log('test', this.brands);
+      console.log('test');
+      resolve(null)
+    })
+  }
+
 
   displayFn(brand: Brand): string {
     return brand && brand.brandName ? brand.brandName : '';
@@ -88,71 +127,63 @@ export class NewWindowComponent implements OnInit {
 
   private _filter(name: string): Brand[] {
     const filterValue = name.toLowerCase();
-    return this.options.filter(option => option.brandName.toLowerCase().includes(filterValue));
+    return this.options.filter((option: Brand) => option.brandName.toLowerCase().includes(filterValue));
   }
 
+  private _filtreModels(name: string): Model[] {
+    this._uniqueModels(this.modelList);
+    return this.modelList.filter((m: Model) => m.brand.brandName.includes(name));
+  }
 
-  // private initForm(window: Window = {
-  //                    code: '',
-  //                    name: '',
-  //                    unitSalePrice: 0,
-  //                    totalQty: 0,
-  //                    model: {modelName: '', code: ''},
-  //                    windowsType: {name: ''},
-  //                    optionsWindows: []
-  //                  },
-  //                  brand: Brand = {idBrand : 0 ,brandName: ''}): FormGroup {
-  //   return this._fb.group({
-  //     brand: [brand, Validators.required],
-  //     // windowsType:[Window.windowsType.name, Validators.required],
-  //     code: [window.code, [Validators.minLength(2), Validators.required]],
-  //     name: [window.name, Validators.required],
-  //     unitSalePrice: [window.unitSalePrice],
-  //   })
-  // }
-  private brandTest !: Brand;
+  private _uniqueModels(model: Model[]): Model[]{
+    var uniqueArr = [...new Set(model)]
+
+    console.log(uniqueArr);
+    // console.log(unique);
+    return model.filter((m:Model) => {
+      // console.log( !m.brand.brandName.includes(m.brand.brandName));
+    })
+  }
 
   private initForm(): FormGroup {
     return this.windowForm = this._fb.group({
-      brand: [this.filteredOptions, [Validators.required, this.requireMatch]],
-      type: ['', Validators.required],
+      brand: [this.filteredOptions, Validators.required],
+      type: [this.windowsType],
       model: ['', Validators.required]
     });
   }
 
-  private requireMatch(control: AbstractControl) {
-    console.log('req:::::::::::::::');
-    if (control.value === '') {
-      console.log('dans le if');
-      return {incorrect: true};
-    }
-    return null;
-    // const selection: any = control.value;
-    // console.log('require :: ', selection);
-    // if (typeof selection === 'string') {
-    //   return {incorrect: true};
-    // }
-    // return null;
-  }
-
-  public submit(): void {
-    // this._router.navigate(['..'], {relativeTo: this._activatedRoute});
-    // this.windowForm.reset();
-  }
-
   public setBrand(brand: Brand): void {
+    this.modelSelected = brand.idBrand;
     this.windowForm.patchValue({
       brand: brand
     })
   }
 
-  public test(): void {
-    this.options.filter((b:Brand) => {
-      if(b.brandName.toLowerCase() === this.el.nativeElement.value.toLowerCase()){
+  public setBrandDownKey(): void {
+    this.options.filter((b: Brand) => {
+      if (b.brandName.toLowerCase() === this.el.nativeElement.value.toLowerCase()) {
         this.windowForm.patchValue({
           brand: b
-        })
+        });
       }
-    } )
+    })
+  }
+
+  public refrechModelList() {
+    // return this.models.filter((m: Model) => {
+    //   m.brand.brandName.includes(this.el.nativeElement.value);
+    // });
+
+  }
+
+  public submit(): void {
+    console.log(this.windowForm.valid);
+    // this._router.navigate(['..'], {relativeTo: this._activatedRoute});
+    // this.windowForm.reset();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }
