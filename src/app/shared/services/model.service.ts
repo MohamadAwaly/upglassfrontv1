@@ -18,8 +18,8 @@ export class ModelService {
    * Get list of windows
    */
 
-  public getModelsByIdBrand(id : number ): Observable<Model []> {
-    return this._http.get<Model[]>(`http://localhost:8080/upglass/model/${id}`).pipe(
+  public getModelsByIdBrand( ): Observable<Model []> {
+    return this._http.get<Model[]>('http://localhost:8080/upglass/model/models').pipe(
       tap((models: Model[]) => {
           this.model$.next(models);
         }

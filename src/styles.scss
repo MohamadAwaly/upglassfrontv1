@@ -47,6 +47,9 @@ button:disabled {
   --lightgray: #ddd;
   --text-regular: #444;
 }
+h2 {
+  color: var(--accent);
+}
 
 body {
   background: var(--body);

@@ -1,9 +1,7 @@
 <h1 class="p-20">Ajouter une nouvelle référence</h1>
-
 <form [formGroup]="windowForm" (ngSubmit)="submit()">
-
-  <mat-card class="container "
-  >
+  <mat-card class="container ">
+    <h2>Information de la voiture</h2>
     <div fxLayout="row wrap"
          fxLayoutAlign="space-between space-between"
          fxLayoutGap="3px">
@@ -26,13 +24,14 @@
       </mat-form-field>
 
       <mat-form-field appearance="fill">
-        <mat-label>Type de la fenêtre</mat-label>
-        <mat-select formControlName="type">
-          <mat-option *ngFor="let type of windowsType" [value]="type">
-            {{type.name}}
+        <mat-label>Type de carroserie</mat-label>
+        <mat-select formControlName="body">
+          <mat-option *ngFor="let body of bodyShellType" [value]="body">
+            {{body.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>
+
 
       <!--      <div class="">-->
       <!--        <mat-form-field appearance="fill">-->
@@ -66,13 +65,58 @@
       <!--          <input type="number" formControlName="unitSalePrice" matInput>-->
       <!--        </mat-form-field>-->
       <!--      </div>-->
+
     </div>
+
+    <hr>
+    <h2>Information de la vitre</h2>
+
+    <div fxLayout="row wrap"
+         fxLayoutAlign="space-between space-between"
+         fxLayoutGap="3px">
+      <mat-form-field appearance="fill">
+        <mat-label>Type de la fenêtre</mat-label>
+        <mat-select formControlName="type">
+          <mat-option *ngFor="let type of windowsType" [value]="type">
+            {{type.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="this.type">
+          Please enter a value
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Code</mat-label>
+        <input formControlName="code" matInput type="text" value="code">
+<!--        <mat-error *ngIf="windowForm.controls['code'].hasError('required')">-->
+        <mat-error *ngIf="this.code">
+          Please enter a value
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Nom</mat-label>
+        <input formControlName="name" matInput type="text" value="name">
+        <mat-error *ngIf="this.name">
+          Please enter a value
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Prix de vente</mat-label>
+        <input formControlName="price" matInput type="number" value="price">
+      </mat-form-field>
+    </div>
+
+
     <hr>
     <div class="actions "
          fxLayoutAlign="end">
       <button [disabled]="windowForm.invalid" class="btn btn-primary">Valider</button>
       <button mat-button color="accent" type="button" routerLink=".." class="btn btn-secondary">Annuler</button>
     </div>
+
+
   </mat-card>
 
 

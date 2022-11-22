@@ -8,9 +8,10 @@ import {WindowsType} from "../../../shared/interfaces/windows-type";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Window} from "../../../shared/interfaces/window";
 import {Brand} from "../../../shared/interfaces/brand";
-import * as events from "events";
 import {Model} from "../../../shared/interfaces/model";
 import {ModelService} from "../../../shared/services/model.service";
+import {BodyShelType} from "../../../shared/interfaces/body-shel-type";
+import {BodyShellTypeService} from "../../../shared/services/body-shell-type.service";
 
 
 @Component({
@@ -20,12 +21,13 @@ import {ModelService} from "../../../shared/services/model.service";
 })
 export class NewWindowComponent implements OnInit, OnDestroy {
 
-  public windowsType: WindowsType [] = [];
-  public brands: Brand [] = [];
-  public models!: Observable<Model[]>;
-  public modelList: Model[] = [];
-  public modelSelected: number | undefined = 0;
   private subscription: Subscription = new Subscription();
+
+  public models!: Observable<Model[]>;
+  public windowsType: WindowsType [] = [];
+  public modelList: Model[] = [];
+  public brands: Brand [] = [];
+  public bodyShellType: BodyShelType[] = [];
   public window!: Window;
 
   public windowForm: FormGroup = this.initForm();
@@ -39,24 +41,30 @@ export class NewWindowComponent implements OnInit, OnDestroy {
   constructor(private _fb: FormBuilder,
               private _brandService: BrandService,
               private _windowsTypeService: WindowsTypeService,
+              private _bodyShellTypeService: BodyShellTypeService,
               private _modelService: ModelService,
               private _router: Router,
               private _activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    if (this.modelSelected !== undefined) {
-      this.subscription.add(this._modelService.getModelsByIdBrand(this.modelSelected).subscribe((model: Model[]) => {
-          this.modelList = model;
-          this.models = this.myControl.valueChanges.pipe(
-            map(value => {
-              const name: any = typeof value === 'string' ? value : value?.brandName;
-              return name ? this._filtreModels(name as string) : this.modelList.slice();
-            })
-          )
-        })
-      );
-    }
+
+    //Get body shell type list
+    this.subscription.add(this._bodyShellTypeService.getBodyShellType().subscribe((body : BodyShelType[])=>{
+      this.bodyShellType = body;
+    }))
+
+    // get model list
+    this.subscription.add(this._modelService.getModelsByIdBrand().subscribe((model: Model[]) => {
+        this.modelList = model;
+        this.models = this.myControl.valueChanges.pipe(
+          map(value => {
+            const name: any = typeof value === 'string' ? value : value?.brandName;
+            return name ? this._filtreModels(name as string) : this.modelList.slice();
+          })
+        )
+      })
+    );
 
 
     // get brand list
@@ -135,12 +143,12 @@ export class NewWindowComponent implements OnInit, OnDestroy {
     return this.modelList.filter((m: Model) => m.brand.brandName.includes(name));
   }
 
-  private _uniqueModels(model: Model[]): Model[]{
+  private _uniqueModels(model: Model[]): Model[] {
     var uniqueArr = [...new Set(model)]
 
     console.log(uniqueArr);
     // console.log(unique);
-    return model.filter((m:Model) => {
+    return model.filter((m: Model) => {
       // console.log( !m.brand.brandName.includes(m.brand.brandName));
     })
   }
@@ -148,13 +156,28 @@ export class NewWindowComponent implements OnInit, OnDestroy {
   private initForm(): FormGroup {
     return this.windowForm = this._fb.group({
       brand: [this.filteredOptions, Validators.required],
-      type: [this.windowsType],
-      model: ['', Validators.required]
+      body : [this.bodyShellType, Validators.required],
+      type: [this.windowsType, Validators.required],
+      model: ['', Validators.required],
+      code: ['', Validators.required],
+      name: ['', Validators.required],
+      price: ['']
     });
   }
 
+  // GETTER
+  get type () {
+    return this.windowForm.get('type')?.hasError('required');
+  }
+  get code() {
+    return this.windowForm.get('code')?.hasError('required');
+  }
+
+  get name() {
+    return this.windowForm.get('name')?.hasError('required');
+  }
+
   public setBrand(brand: Brand): void {
-    this.modelSelected = brand.idBrand;
     this.windowForm.patchValue({
       brand: brand
     })
@@ -179,7 +202,7 @@ export class NewWindowComponent implements OnInit, OnDestroy {
 
   public submit(): void {
     console.log(this.windowForm.valid);
-    // this._router.navigate(['..'], {relativeTo: this._activatedRoute});
+    this._router.navigate(['..'], {relativeTo: this._activatedRoute});
     // this.windowForm.reset();
   }
 
