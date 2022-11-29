@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject, Observable, tap} from "rxjs";
-import {Brand} from "../interfaces/brand";
 import {HttpClient} from "@angular/common/http";
 import {Model} from "../interfaces/model";
 

@@ -28,8 +28,8 @@ module.exports = function (config) {
       dir: require('path').join(__dirname, './coverage/upglassfrontv1'),
       subdir: '.',
       reporters: [
-        { type: 'html' },
-        { type: 'text-summary' }
+        { windowsType: 'html' },
+        { windowsType: 'text-summary' }
       ]
     },
     reporters: ['progress', 'kjhtml'],

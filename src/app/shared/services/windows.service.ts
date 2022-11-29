@@ -25,5 +25,12 @@ export class WindowsService {
     )
   }
 
+  /**
+   * add new window reference
+   */
+  public addwindow(window: Window) : void {
+    this._http.post<Window>('http://localhost:8080/upglass/window/add',window).subscribe();
+  }
+
 
 }

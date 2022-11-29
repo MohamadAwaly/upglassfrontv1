@@ -30,25 +30,10 @@
             {{body.name}}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="this.body">
+          Please enter a value
+        </mat-error>
       </mat-form-field>
-
-
-      <!--      <div class="">-->
-      <!--        <mat-form-field appearance="fill">-->
-      <!--          <mat-label>type</mat-label>-->
-      <!--          <input type="text" formControlName="type" matInput>-->
-      <!--          <mat-error *ngIf="windowForm.controls['type'].hasError('incorrecte')">-->
-      <!--            Please select a valid project-->
-      <!--          </mat-error>-->
-      <!--        </mat-form-field>-->
-      <!--      </div>-->
-
-      <!--      <div class="">-->
-      <!--        <mat-form-field appearance="fill">-->
-      <!--          <mat-label>Model</mat-label>-->
-      <!--          <input formControlName="model" matInput>-->
-      <!--        </mat-form-field>-->
-      <!--      </div>-->
 
       <mat-form-field appearance="fill">
         <mat-label>Model</mat-label>
@@ -57,14 +42,10 @@
             {{model.modelName}}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="this.windowsType">
+          Please enter a value
+        </mat-error>
       </mat-form-field>
-
-      <!--      <div class="">-->
-      <!--        <mat-form-field appearance="fill">-->
-      <!--          <mat-label>Prix</mat-label>-->
-      <!--          <input type="number" formControlName="unitSalePrice" matInput>-->
-      <!--        </mat-form-field>-->
-      <!--      </div>-->
 
     </div>
 
@@ -76,12 +57,12 @@
          fxLayoutGap="3px">
       <mat-form-field appearance="fill">
         <mat-label>Type de la fenêtre</mat-label>
-        <mat-select formControlName="type">
+        <mat-select formControlName="windowsType">
           <mat-option *ngFor="let type of windowsType" [value]="type">
             {{type.name}}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="this.type">
+        <mat-error *ngIf="this.windowsType">
           Please enter a value
         </mat-error>
       </mat-form-field>
@@ -89,7 +70,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Code</mat-label>
         <input formControlName="code" matInput type="text" value="code">
-<!--        <mat-error *ngIf="windowForm.controls['code'].hasError('required')">-->
+        <!--        <mat-error *ngIf="windowForm.controls['code'].hasError('required')">-->
         <mat-error *ngIf="this.code">
           Please enter a value
         </mat-error>
@@ -104,10 +85,39 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Prix de vente</mat-label>
-        <input formControlName="price" matInput type="number" value="price">
+        <input formControlName="unitSalePrice" matInput type="number" value="unitSalePrice">
       </mat-form-field>
     </div>
+    <hr>
+<!--    <mat-form-field class="w-100" appearance="fill">-->
+<!--      <mat-label>Options</mat-label>-->
+<!--      <mat-select formControlName="option">-->
+<!--        <mat-option *ngFor="let option of optionsWindows" [value]="option">-->
+<!--          {{option.name}}-->
+<!--        </mat-option>-->
+<!--      </mat-select>-->
+<!--      <mat-error *ngIf="this.optionsWindow">-->
+<!--        Please enter a value-->
+<!--      </mat-error>-->
+<!--    </mat-form-field>-->
 
+    <h2>Options</h2>
+    <button mat-button color="primary" type="button" (click)="addOption()">+ Add another option</button>
+    <div formArrayName="optionsWindows">
+      <div *ngFor="let option of optionsWindows.controls; let i=index">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Options</mat-label>
+          <mat-select [formControlName]="i">
+            <mat-option *ngFor="let option of optionsWin" [value]="option">
+              {{option.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="this.optionsWindows">
+            Please enter a value
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
 
     <hr>
     <div class="actions "

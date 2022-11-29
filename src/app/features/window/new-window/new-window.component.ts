@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {map, Observable, startWith, Subscription, tap} from "rxjs";
 
-import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {WindowsTypeService} from "../../../shared/services/windows-type.service";
 import {BrandService} from "../../../shared/services/brand.service";
 import {WindowsType} from "../../../shared/interfaces/windows-type";
@@ -12,6 +12,9 @@ import {Model} from "../../../shared/interfaces/model";
 import {ModelService} from "../../../shared/services/model.service";
 import {BodyShelType} from "../../../shared/interfaces/body-shel-type";
 import {BodyShellTypeService} from "../../../shared/services/body-shell-type.service";
+import {OptionsWindowService} from "../../../shared/services/options-window.service";
+import {OptionsWindow} from "../../../shared/interfaces/options-window";
+import {WindowsService} from "../../../shared/services/windows.service";
 
 
 @Component({
@@ -28,6 +31,7 @@ export class NewWindowComponent implements OnInit, OnDestroy {
   public modelList: Model[] = [];
   public brands: Brand [] = [];
   public bodyShellType: BodyShelType[] = [];
+  public optionsWin: OptionsWindow [] = [];
   public window!: Window;
 
   public windowForm: FormGroup = this.initForm();
@@ -40,17 +44,25 @@ export class NewWindowComponent implements OnInit, OnDestroy {
 
   constructor(private _fb: FormBuilder,
               private _brandService: BrandService,
+              private _windowService : WindowsService,
               private _windowsTypeService: WindowsTypeService,
               private _bodyShellTypeService: BodyShellTypeService,
               private _modelService: ModelService,
+              private _optionsWindowService: OptionsWindowService,
               private _router: Router,
               private _activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
 
+    //Get options
+    this.subscription.add(this._optionsWindowService.getOptions().subscribe((options: OptionsWindow[]) => {
+        this.optionsWin = options;
+      })
+    )
+
     //Get body shell type list
-    this.subscription.add(this._bodyShellTypeService.getBodyShellType().subscribe((body : BodyShelType[])=>{
+    this.subscription.add(this._bodyShellTypeService.getBodyShellType().subscribe((body: BodyShelType[]) => {
       this.bodyShellType = body;
     }))
 
@@ -156,25 +168,45 @@ export class NewWindowComponent implements OnInit, OnDestroy {
   private initForm(): FormGroup {
     return this.windowForm = this._fb.group({
       brand: [this.filteredOptions, Validators.required],
-      body : [this.bodyShellType, Validators.required],
-      type: [this.windowsType, Validators.required],
+      body: [this.bodyShellType, Validators.required],
+      windowsType: [this.windowsType, Validators.required],
       model: ['', Validators.required],
       code: ['', Validators.required],
       name: ['', Validators.required],
-      price: ['']
+      unitSalePrice: [''],
+      optionsWindows: this._fb.array([
+        this._fb.control(this.optionsWin,Validators.required)
+      ]),
     });
   }
 
   // GETTER
-  get type () {
+  get body() {
+    return this.windowForm.get('body')?.hasError('required');
+  }
+
+  get model() {
+    return this.windowForm.get('model')?.hasError('required');
+  }
+
+  get type() {
     return this.windowForm.get('type')?.hasError('required');
   }
+
   get code() {
     return this.windowForm.get('code')?.hasError('required');
   }
 
   get name() {
     return this.windowForm.get('name')?.hasError('required');
+  }
+
+  get optionsWindows() {
+    return this.windowForm.get('optionsWindows') as FormArray;
+  }
+
+  addOption() {
+    this.optionsWindows.push(this._fb.control(this.optionsWin,Validators.required));
   }
 
   public setBrand(brand: Brand): void {
@@ -201,7 +233,8 @@ export class NewWindowComponent implements OnInit, OnDestroy {
   }
 
   public submit(): void {
-    console.log(this.windowForm.valid);
+    console.log(this.windowForm.value);
+    this._windowService.addwindow(this.windowForm.value);
     this._router.navigate(['..'], {relativeTo: this._activatedRoute});
     // this.windowForm.reset();
   }
